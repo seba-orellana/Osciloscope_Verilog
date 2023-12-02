@@ -12,14 +12,7 @@ module memoria_toplevel(
     output txd_o    
     );
 
-wire [8:0] mem_ram_vga;
-wire [8:0] address_ram_vga;
 
-wire [8:0] dir_salida_9b;
-wire [8:0] dato_salida_9b;
-
-wire [15:0] salida_mem_adc;
-wire [11:0] dir_salida_mem_adc;
 
 clk_sys_vga clk_100_40
    (
@@ -47,6 +40,9 @@ clk_wiz_1 clock_adc_uart
 
 wire locked;     
 assign locked = (locked0 & locked2);    
+
+wire [11:0] dir_salida_mem_adc;
+wire [15:0] salida_mem_adc;
     
 blk_mem_adc16b ram_adc (
   .clka(clk_adc),    // input wire clka
@@ -58,33 +54,32 @@ blk_mem_adc16b ram_adc (
   .doutb(salida_mem_adc)  // output wire [15 : 0] dato de salida
 );   
 
-blk_mem_VGA ram_vga (
-  .clka(clk_adc),    // input wire clock de escritura
-  .wea(wea),      // input wire [0 : 0] wea
-  .addra(dir_salida_9b),  // input wire [8 : 0] Direccion de entrada (Adaptador) 
-  .dina(dato_salida_9b),    // input wire [8 : 0] Dato a escribir (Adaptador)
-  .clkb(clk_vga),    // input wire clock de lectura (igual al VGA)
-  .addrb(ram_address),  // input wire [8 : 0] direccion a leer para el pixel de VGA
-  .doutb(mem_ram)  // output wire [8 : 0] dato a pintar en la pantalla
-); 
-
-/*
-rom_seno seno (
-  .clka(clk_vga),    // input wire clka
-  .addra(address_ram),  // input wire [9 : 0] addra
-  .douta(mem_ram)  // output wire [9 : 0] douta
-);*/
-
 //////////////////////////////////////////////////
 /////////////////       VGA         //////////////
 //////////////////////////////////////////////////
+
+wire [8:0] dato_salida_a_vga;
+wire [9:0] dir_salida_a_vga;
+
+wire [9:0] ram_address_vga;
+wire [8:0] mem_ram_vga;
+
+blk_mem_VGA ram_vga (
+  .clka(clk_adc),    // input wire clka
+  .wea(wea),      // input wire [0 : 0] wea
+  .addra(dir_salida_a_vga),  // input wire [9 : 0] direccion para escribir desde adaptador
+  .dina(dato_salida_a_vga),    // input wire [8 : 0] dato a escribir desde adaptado
+  .clkb(clk_vga),    // input wire clkb
+  .addrb(ram_address_vga),  // input wire [9 : 0] direccion para leer desde VGA
+  .doutb(mem_ram_vga)  // output wire [8 : 0] dato para enviar a VGA
+);
 
 vga vga_monitor (
         clk_vga,
         reset,
         locked,
-        mem_ram_vga,
-        ram_address_vga,
+        mem_ram_vga,        //[8:0]
+        ram_address_vga,    //[9:0]
         hs,
         vs,
         r,
@@ -93,6 +88,7 @@ vga vga_monitor (
     );
 
 assign wea = 1;
+assign wea1 = 0;
 
 //////////////////////////////////////////////////////
 /////////////////       UART        //////////////////
@@ -121,10 +117,10 @@ adaptador adaptador(
     locked,
     //amp,
     //tiempo,
-    salida_mem_adc,      //Del ADC salen 16 bits de dato
-    dir_salida_mem_adc,      //Direccion para leer de la memoria del ADC
-    dato_salida_9b,     //A enviar a la ram del ADC
-    dir_salida_9b       //Direccion del dato para escribir en la RAM de ADC
+    salida_mem_adc,      // [15:0] dato que ingresa de la memoria del ADC
+    dir_salida_mem_adc,      // [11:0] Direccion para leer de la memoria del ADC
+    dato_salida_a_vga,     // [8:0] A enviar a la ram del VGA
+    dir_salida_a_vga       // [9:0] Direccion del dato para escribir en la RAM de VGA (0-800)
     );
     
 endmodule

@@ -4,7 +4,7 @@ module vga (
         input clk,
         input reset,
         input locked,
-        input [9:0] mem_ram,
+        input [8:0] mem_ram,
         output [9:0] address_ram,
         output hs,
         output vs,
@@ -61,6 +61,8 @@ reg [3:0] g_a;
 reg [3:0] b_a;
 
 reg [9:0] val_anterior;
+
+reg [10:0] aux_mem_ram;
  
 //Contadores para ir colocando los colores en la pantalla
 //Una vez terminada la cuenta horizontal, empiezo con la cuenta vertical
@@ -160,16 +162,16 @@ always @(posedge clk) begin
 /////////////////////////////////////////////////////////////////////////////////
 
 //Ajuste de los puntos (Mantener linealidad de la funcion a graficar en la pantalla)
-
-            if (mem_ram < val_anterior) begin
-                if ((v_cont >= mem_ram) && (v_cont < val_anterior)) begin
+            aux_mem_ram <= mem_ram + 68;
+            if (aux_mem_ram < val_anterior) begin
+                if ((v_cont >= aux_mem_ram) && (v_cont < val_anterior)) begin
                     r_a <= 4'h0;
                     g_a <= 4'h0;
                     b_a <= 4'hF;
                 end
             end
-            else if (mem_ram >= val_anterior) begin
-                if ((v_cont >= val_anterior) && (v_cont <= mem_ram)) begin
+            else if (aux_mem_ram >= val_anterior) begin
+                if ((v_cont >= val_anterior) && (v_cont <= aux_mem_ram)) begin
                     r_a <= 4'h0;
                     g_a <= 4'h0;
                     b_a <= 4'hF;
@@ -177,7 +179,7 @@ always @(posedge clk) begin
             end
             
         //actualizo el valor anterior para el proximo pixel        
-        val_anterior <= mem_ram;
+        val_anterior <= aux_mem_ram;
         end  //(end if(in_active))                   
         //Si no estamos dentro de la parte ACTIVE, no enviar colores   
         else begin 
