@@ -4,8 +4,7 @@ Osciloscopio Verilog
 Falta por hacer:  
 
 * Agregar ADC
-* Modificar el adaptador
+* Modificar el adaptador con los comandos faltantes
 * Pruebas generales
-* Corregir Delay al usar memoria
 * Completar grilla con info. general
-* Agregar segundo canal
+* Agregar algun tipo de respuesta por la UART

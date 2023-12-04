@@ -10,7 +10,7 @@ module comandos(
     output reg [3:0] voltdiv,
     output reg [31:0] tiempo,
     output [7:0] char,
-    output pulso_tx 
+    output pulso_tx
     );
 
 always @(posedge clk_64) begin

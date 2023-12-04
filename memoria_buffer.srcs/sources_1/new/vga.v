@@ -5,6 +5,7 @@ module vga (
         input reset,
         input locked,
         input [8:0] mem_ram,
+        input canal_selector,
         output [9:0] address_ram,
         output hs,
         output vs,
@@ -70,7 +71,7 @@ always @(posedge clk) begin
     if (reset || ~locked) begin
         h_cont <= 0;
         v_cont <= 0;
-        h_active <=0;
+        h_active <= 0;
     end else begin
         if (h_cont < TOTAL_H - 1)begin 
             h_cont <= h_cont + 1;
@@ -118,7 +119,7 @@ always @(posedge clk) begin
         r_a <= 0;
         g_a <= 0;
         b_a <= 0;
-        val_anterior <= 0;
+        val_anterior <= mem_ram;
     end else begin
         if (in_active) begin
         //Segun el orden de los Case, primero se pinta horizontal y despues se pinta encima el vertical
@@ -163,26 +164,56 @@ always @(posedge clk) begin
 
 //Ajuste de los puntos (Mantener linealidad de la funcion a graficar en la pantalla)
             aux_mem_ram <= mem_ram + 68;
-            if (aux_mem_ram < val_anterior) begin
-                if ((v_cont >= aux_mem_ram) && (v_cont < val_anterior)) begin
-                    r_a <= 4'h0;
-                    g_a <= 4'h0;
-                    b_a <= 4'hF;
-                end
-            end
-            else if (aux_mem_ram >= val_anterior) begin
-                if ((v_cont >= val_anterior) && (v_cont <= aux_mem_ram)) begin
-                    r_a <= 4'h0;
-                    g_a <= 4'h0;
-                    b_a <= 4'hF;
-                end
-            end
             
+            //Caso especial para el primer valor
+            if (h_active == 0 && v_cont == aux_mem_ram) begin 
+                if (canal_selector) begin
+                    r_a <= 4'h0;
+                    g_a <= 4'h0;
+                    b_a <= 4'hF;
+                end
+                else begin
+                    r_a <= 4'hF;
+                    g_a <= 4'h0;
+                    b_a <= 4'h0;
+                end
+            end
+            //Casos distintos al primer valor        
+            else begin    
+                if (aux_mem_ram < val_anterior) begin
+                    if ((v_cont >= aux_mem_ram) && (v_cont < val_anterior)) begin
+                        if (canal_selector) begin
+                            r_a <= 4'h0;
+                            g_a <= 4'h0;
+                            b_a <= 4'hF;
+                        end
+                        else begin
+                            r_a <= 4'hF;
+                            g_a <= 4'h0;
+                            b_a <= 4'h0;
+                        end    
+                    end
+                end
+                else if (aux_mem_ram >= val_anterior) begin
+                    if ((v_cont >= val_anterior) && (v_cont <= aux_mem_ram)) begin
+                        if (canal_selector) begin
+                            r_a <= 4'h0;
+                            g_a <= 4'h0;
+                            b_a <= 4'hF;
+                        end
+                        else begin
+                            r_a <= 4'hF;
+                            g_a <= 4'h0;
+                            b_a <= 4'h0;
+                        end  
+                    end
+                end
+            end    
         //actualizo el valor anterior para el proximo pixel        
         val_anterior <= aux_mem_ram;
         end  //(end if(in_active))                   
         //Si no estamos dentro de la parte ACTIVE, no enviar colores   
-        else begin 
+        else begin   
             r_a <= 4'h0;
             g_a <= 4'h0;
             b_a <= 4'h0;
