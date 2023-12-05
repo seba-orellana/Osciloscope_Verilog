@@ -6,13 +6,16 @@ module memoria_toplevel(
     output hs,
     output vs,
     input rxd_i,
+    input vauxp6,            // input wire vauxp6
+    input vauxn6,            // input wire vauxn6
+    input vauxp14,          // input wire vauxp14
+    input vauxn14,  
     output [3:0] r,
     output [3:0] g,
     output [3:0] b,
-    output txd_o    
+    output txd_o,
+    output [15:0] led    
     );
-
-
 
 clk_sys_vga clk_100_40
    (
@@ -43,16 +46,38 @@ assign locked = (locked0 & locked2);
 
 //La direccion para leer se puede compartir, es el mismo contador
 //Dentro de adaptador se escoge con cual de los ADC se trabaja
+
+//////////////////////////////////////////////////
+/////////////////       ADC         //////////////
+//////////////////////////////////////////////////
+
 wire [11:0] dir_salida_mem_adc;
 
 wire [15:0] salida_mem_adc;
 wire [15:0] salida_mem_adc_2;
+
+wire [11:0] address_adc;
+wire [15:0] dato_canal_1;
+
+adc adc_convertidor(
+    clk_adc,
+    reset,
+    locked,
+    vauxp6,            // input wire vauxp6
+    vauxn6,            // input wire vauxn6
+    vauxp14,          // input wire vauxp14
+    vauxn14,  
+    dato_canal_1,       //output [15:0] dato a escribir en memoria
+    //output reg [15:0] dato_canal_2,
+    address_adc,
+    led
+    );
     
 blk_mem_adc16b ram_adc (
   .clka(clk_adc),    // input wire clka
-  .wea(wea1),      // input wire [0 : 0] wea
-  .addra(),  // input wire [11 : 0] direccion de entrada (ADC)
-  .dina(),    // input wire [15 : 0] dato a escribir (ADC)
+  .wea(wea),      // input wire [0 : 0] wea
+  .addra(address_adc),  // input wire [11 : 0] direccion de entrada (ADC)
+  .dina(dato_canal_1),    // input wire [15 : 0] dato a escribir (ADC)
   .clkb(clk_adc),    // input wire clkb
   .addrb(dir_salida_mem_adc),  // input wire [11 : 0] direccion de salida
   .doutb(salida_mem_adc)  // output wire [15 : 0] dato de salida
@@ -60,13 +85,14 @@ blk_mem_adc16b ram_adc (
 
 ram_adc_2 canal_adc_2 (
   .clka(clk_adc),    // input wire clka
-  .wea(wea1),      // input wire [0 : 0] wea
+  .wea(wea),      // input wire [0 : 0] wea
   .addra(),  // input wire [11 : 0] direccion de entrada (ADC)
   .dina(),    // input wire [15 : 0] dato a escribir (ADC)
   .clkb(clk_adc),    // input wire clkb
   .addrb(dir_salida_mem_adc),  // input wire [11 : 0] direccion de salida
   .doutb(salida_mem_adc_2)  // output wire [15 : 0] dato de salida
 );
+
 
 //////////////////////////////////////////////////
 /////////////////       VGA         //////////////
@@ -103,7 +129,6 @@ vga vga_monitor (
     );
 
 assign wea = 1;
-assign wea1 = 0;
 
 //////////////////////////////////////////////////////
 /////////////////       UART        //////////////////
@@ -115,6 +140,7 @@ wire [7:0] dato_rx_uart;
 uart modulo_uart (
         clk_uart,           //7.38 MHz
         locked,
+        reset,
         rxd_i,              //Canal de entrada por donde entran las tramas de la UART
         pulso_tx,           //Pulso habilitador para enviar por la UART
         dato_tx_uart,       //Dato a enviar por la UART
