@@ -9,7 +9,9 @@ module uart(
     input [7:0] dato_tx_uart,       //Dato a enviar por la UART
     output txd_o,                   //Canal de salida por donde salen las tramas de la UART
     output [7:0] dato_rx_uart,       //Dato recibido de la UART
-    output canal_selector
+    output canal_selector,
+    output [2:0] voltdiv,
+    output pausa
     );
     
 Uart_rx rx (
@@ -27,8 +29,8 @@ Uart_tx tx (
     clk_uart,
     locked_clk_uart,
     reset,
-    dato_tx_uart,       //Byte a transmitir 
-    pulso_tx,           //Pulso para enviar el byte
+    dato_rx_uart,       //Byte a transmitir 
+    pulso_rx,           //Pulso para enviar el byte
     dato_o              //Trama codificada para enviar al transmisor de la UART
     );            
 
@@ -40,13 +42,10 @@ comandos input_teclado (
     locked_clk_uart,
     dato_rx_uart,   //Dato que entro de la UART
     pulso_rx,       //Pulso que indica que recibi algo
-    canal,
+    canal_selector,
     voltdiv,
     tiempo,
-    dato_tx_uart,   //ECO
-    pulso_tx        //Pulso para enviar ECO      
+    pausa    
     ); 
-
-assign canal_selector = canal;
     
 endmodule

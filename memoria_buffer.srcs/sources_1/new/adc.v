@@ -10,8 +10,7 @@ module adc(
     input vauxn14,  
     output [15:0] dato_canal_1,
     //output reg [15:0] dato_canal_2,
-    output [11:0] address,
-    output reg [15:0] led
+    output [11:0] address
     );
 
 reg [11:0] cont;
@@ -39,8 +38,9 @@ adc_vauxp6_14 adc_canal_6_14 (
   .den_in(eoc),                            // input wire den_in
   .dwe_in(0),                            // input wire dwe_in
   .drdy_out(ready),                        // output wire drdy_out
-  .do_out(data),                            // output wire [15 : 0] do_out
+  .do_out(dato_canal_1),                            // output wire [15 : 0] do_out
   .dclk_in(clk),                          // input wire dclk_in
+  .reset_in(reset | ~locked),             // input wire reset_in
   .vp_in(0),                              // input wire vp_in
   .vn_in(0),                              // input wire vn_in
   .vauxp6(vauxp6),                            // input wire vauxp6
@@ -52,9 +52,7 @@ adc_vauxp6_14 adc_canal_6_14 (
   .alarm_out(),                      // output wire alarm_out
   .eos_out(eos),                          // output wire eos_out
   .busy_out()                        // output wire busy_out
-);
-    
-assign dato_canal_1 = data;    
+); 
 
 assign address = cont;
     

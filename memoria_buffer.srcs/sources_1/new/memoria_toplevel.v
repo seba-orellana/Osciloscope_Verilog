@@ -13,8 +13,7 @@ module memoria_toplevel(
     output [3:0] r,
     output [3:0] g,
     output [3:0] b,
-    output txd_o,
-    output [15:0] led    
+    output txd_o  
     );
 
 clk_sys_vga clk_100_40
@@ -69,26 +68,27 @@ adc adc_convertidor(
     vauxn14,  
     dato_canal_1,       //output [15:0] dato a escribir en memoria
     //output reg [15:0] dato_canal_2,
-    address_adc,
-    led
+    address_adc
     );
     
 blk_mem_adc16b ram_adc (
   .clka(clk_adc),    // input wire clka
-  .wea(wea),      // input wire [0 : 0] wea
+  .wea(canal_selector & pausa),      // input wire [0 : 0] wea
   .addra(address_adc),  // input wire [11 : 0] direccion de entrada (ADC)
   .dina(dato_canal_1),    // input wire [15 : 0] dato a escribir (ADC)
   .clkb(clk_adc),    // input wire clkb
+  .enb(canal_selector),            //input enb
   .addrb(dir_salida_mem_adc),  // input wire [11 : 0] direccion de salida
   .doutb(salida_mem_adc)  // output wire [15 : 0] dato de salida
 );
 
 ram_adc_2 canal_adc_2 (
   .clka(clk_adc),    // input wire clka
-  .wea(wea),      // input wire [0 : 0] wea
+  .wea(~canal_selector & pausa),      // input wire [0 : 0] wea
   .addra(),  // input wire [11 : 0] direccion de entrada (ADC)
   .dina(),    // input wire [15 : 0] dato a escribir (ADC)
   .clkb(clk_adc),    // input wire clkb
+  .enb(~canal_selector),            //input enb
   .addrb(dir_salida_mem_adc),  // input wire [11 : 0] direccion de salida
   .doutb(salida_mem_adc_2)  // output wire [15 : 0] dato de salida
 );
@@ -137,6 +137,8 @@ assign wea = 1;
 wire [7:0] dato_tx_uart;
 wire [7:0] dato_rx_uart;
 
+wire [2:0] voltdiv;
+
 uart modulo_uart (
         clk_uart,           //7.38 MHz
         locked,
@@ -146,11 +148,13 @@ uart modulo_uart (
         dato_tx_uart,       //Dato a enviar por la UART
         txd_o,              //Canal de salida por donde salen las tramas de la UART
         dato_rx_uart,
-        canal_selector
+        canal_selector,
+        voltdiv,
+        pausa
         );      
 
 ////////////////////////////////////////////////////////
-//////////         ADAPTADOR DE SEÑAL       ////////////
+//////////         ADAPTADOR DE SENAL       ////////////
 ////////////////////////////////////////////////////////
 
 adaptador adaptador(
@@ -162,6 +166,7 @@ adaptador adaptador(
     salida_mem_adc,      // [15:0] input dato que ingresa de la memoria del ADC
     salida_mem_adc_2,      // [15:0] input dato que ingresa de la memoria del ADC
     canal_selector,         // input
+    voltdiv,                //input [2:0]
     dir_salida_mem_adc,      // [11:0] output Direccion para leer de la memoria del ADC
     dato_salida_a_vga,     // [8:0] output A enviar a la ram del VGA
     dir_salida_a_vga       // [9:0] output Direccion del dato para escribir en la RAM de VGA (0-800)

@@ -5,7 +5,6 @@ Falta por hacer:
 
 * Agregar el canal secundario al ADC
 * Modificar el adaptador con los comandos faltantes
-* Agregar la opcion de pausa
 * Agregar texto en pantalla
 * Pruebas generales
 * Completar grilla con info. general
