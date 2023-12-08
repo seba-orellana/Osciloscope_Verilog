@@ -5,8 +5,7 @@ module uart(
     input locked_clk_uart,
     input reset,
     input rxd_i,                    //Canal de entrada por donde entran las tramas de la UART
-    input pulso_tx,                 //Pulso habilitador para enviar por la UART
-    input [7:0] dato_tx_uart,       //Dato a enviar por la UART
+    //input [7:0] dato_tx_uart,       //Dato a enviar por la UART
     output txd_o,                   //Canal de salida por donde salen las tramas de la UART
     output [7:0] dato_rx_uart,       //Dato recibido de la UART
     output canal_selector,

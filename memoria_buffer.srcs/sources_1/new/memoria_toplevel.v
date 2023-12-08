@@ -65,7 +65,8 @@ adc adc_convertidor(
     vauxp6,            // input wire vauxp6
     vauxn6,            // input wire vauxn6
     vauxp14,          // input wire vauxp14
-    vauxn14,  
+    vauxn14,
+    canal_selector,  
     dato_canal_1,       //output [15:0] dato a escribir en memoria
     //output reg [15:0] dato_canal_2,
     address_adc
@@ -98,6 +99,8 @@ ram_adc_2 canal_adc_2 (
 /////////////////       VGA         //////////////
 //////////////////////////////////////////////////
 
+wire [2:0] voltdiv;
+
 wire [8:0] dato_salida_a_vga;
 wire [9:0] dir_salida_a_vga;
 
@@ -120,6 +123,7 @@ vga vga_monitor (
         locked,
         mem_ram_vga,        //[8:0]
         canal_selector,
+        voltdiv,
         ram_address_vga,    //[9:0]
         hs,
         vs,
@@ -134,18 +138,15 @@ assign wea = 1;
 /////////////////       UART        //////////////////
 //////////////////////////////////////////////////////
 
-wire [7:0] dato_tx_uart;
+//wire [7:0] dato_tx_uart;
 wire [7:0] dato_rx_uart;
-
-wire [2:0] voltdiv;
 
 uart modulo_uart (
         clk_uart,           //7.38 MHz
         locked,
         reset,
         rxd_i,              //Canal de entrada por donde entran las tramas de la UART
-        pulso_tx,           //Pulso habilitador para enviar por la UART
-        dato_tx_uart,       //Dato a enviar por la UART
+        //dato_tx_uart,       //Dato a enviar por la UART
         txd_o,              //Canal de salida por donde salen las tramas de la UART
         dato_rx_uart,
         canal_selector,
@@ -161,8 +162,6 @@ adaptador adaptador(
     clk_adc,
     reset,
     locked,
-    //amp,
-    //tiempo,
     salida_mem_adc,      // [15:0] input dato que ingresa de la memoria del ADC
     salida_mem_adc_2,      // [15:0] input dato que ingresa de la memoria del ADC
     canal_selector,         // input

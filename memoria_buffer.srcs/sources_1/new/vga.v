@@ -6,6 +6,7 @@ module vga (
         input locked,
         input [8:0] mem_ram,
         input canal_selector,
+        input [2:0] voltdiv,
         output [9:0] address_ram,
         output hs,
         output vs,
@@ -53,6 +54,7 @@ localparam V_PULSO = 624;
 reg [10:0] h_cont;
 reg [9:0] v_cont;
 reg [9:0] h_active;
+reg [9:0] v_active;
  
 //Indica si estoy dentro de la parte ACTIVE (Para poder colorear la pantalla) 
 reg in_active;
@@ -79,9 +81,10 @@ always @(posedge clk) begin
             end
         else begin
             h_cont <= 0;
-            if (v_cont < TOTAL_V - 1)
+            if (v_cont < TOTAL_V - 1) begin
                 v_cont <= v_cont + 1;
-            else
+                v_active <= ( v_cont>= 24 &&  v_cont< 624)? v_active + 1 : 0;
+            end else
                 v_cont <= 0;
         end  
     end
@@ -158,14 +161,133 @@ always @(posedge clk) begin
                 default : begin end
             endcase
             
+            //Indicador de canal dentro de la pantalla
+            if (canal_selector) begin
+            //Canal 1
+            //Lineas Horizontales
+                if (v_active == 11 && h_active >= 80 && h_active < 92) begin
+                    r_a <= 4'h0;
+                    g_a <= 4'h0;
+                    b_a <= 4'hF;
+                end
+                if (v_active == 11 && h_active >= 113 && h_active < 119) begin
+                    r_a <= 4'h0;
+                    g_a <= 4'h0;
+                    b_a <= 4'hF;
+                end
+                if (v_active == 33 && h_active >= 80 && h_active < 92) begin
+                    r_a <= 4'h0;
+                    g_a <= 4'h0;
+                    b_a <= 4'hF;
+                end
+                if (v_active == 33 && h_active >= 113 && h_active < 125) begin
+                    r_a <= 4'h0;
+                    g_a <= 4'h0;
+                    b_a <= 4'hF;
+                end
+                if (v_active == 22 && h_active >= 97 && h_active < 109) begin
+                    r_a <= 4'h0;
+                    g_a <= 4'h0;
+                    b_a <= 4'hF;
+                end
+            //Lineas Verticales    
+                if (v_active >= 11 && v_active <= 33 && h_active == 80) begin
+                    r_a <= 4'h0;
+                    g_a <= 4'h0;
+                    b_a <= 4'hF;
+                end 
+                if (v_active >= 11 && v_active <= 33 && h_active == 97) begin
+                    r_a <= 4'h0;
+                    g_a <= 4'h0;
+                    b_a <= 4'hF;
+                end
+                if (v_active >= 11 && v_active <= 33 && h_active == 108) begin
+                    r_a <= 4'h0;
+                    g_a <= 4'h0;
+                    b_a <= 4'hF;
+                end  
+                if (v_active >= 11 && v_active <= 33 && h_active == 118) begin
+                    r_a <= 4'h0;
+                    g_a <= 4'h0;
+                    b_a <= 4'hF;
+                end       
+            end
+            else begin
+            //Canal 2
+            //Lineas Horizontales
+                if (v_active == 11 && h_active >= 480 && h_active < 492) begin
+                    r_a <= 4'hF;
+                    g_a <= 4'h0;
+                    b_a <= 4'h0;
+                end
+                if (v_active == 11 && h_active >= 513 && h_active < 525) begin
+                    r_a <= 4'hF;
+                    g_a <= 4'h0;
+                    b_a <= 4'h0;
+                end
+                if (v_active == 33 && h_active >= 480 && h_active < 492) begin
+                    r_a <= 4'hF;
+                    g_a <= 4'h0;
+                    b_a <= 4'h0;
+                end
+                if (v_active == 33 && h_active >= 513 && h_active < 525) begin
+                    r_a <= 4'hF;
+                    g_a <= 4'h0;
+                    b_a <= 4'h0;
+                end
+                if (v_active == 22 && h_active >= 497 && h_active < 509) begin
+                    r_a <= 4'hF;
+                    g_a <= 4'h0;
+                    b_a <= 4'h0;
+                end
+                if (v_active == 22 && h_active >= 513 && h_active < 525) begin
+                    r_a <= 4'hF;
+                    g_a <= 4'h0;
+                    b_a <= 4'h0;
+                end
+            //Lineas Verticales    
+                if (v_active >= 11 && v_active <= 33 && h_active == 480) begin
+                    r_a <= 4'hF;
+                    g_a <= 4'h0;
+                    b_a <= 4'h0;
+                end 
+                if (v_active >= 11 && v_active <= 33 && h_active == 497) begin
+                    r_a <= 4'hF;
+                    g_a <= 4'h0;
+                    b_a <= 4'h0;
+                end
+                if (v_active >= 11 && v_active <= 33 && h_active == 508) begin
+                    r_a <= 4'hF;
+                    g_a <= 4'h0;
+                    b_a <= 4'h0;
+                end  
+                if (v_active >= 11 && v_active <= 22 && h_active == 524) begin
+                    r_a <= 4'hF;
+                    g_a <= 4'h0;
+                    b_a <= 4'h0;
+                end 
+                if (v_active >= 22 && v_active <= 33 && h_active == 513) begin
+                    r_a <= 4'hF;
+                    g_a <= 4'h0;
+                    b_a <= 4'h0;
+                end       
+            end                                  
+            
 /////////////////////////////////////////////////////////////////////////////////
 ///////////////////     Graficar resultados desde la memoria    /////////////////
 /////////////////////////////////////////////////////////////////////////////////
-
-//Ajuste de los puntos (Mantener linealidad de la funcion a graficar en la pantalla)
-            aux_mem_ram <= mem_ram + 68;
-            
-            //Caso especial para el primer valor
+           
+           case (voltdiv)
+                7: aux_mem_ram <= mem_ram + 576;    //12.8 v/d
+                6: aux_mem_ram <= mem_ram + 572;    //6.4 v/d        
+                5: aux_mem_ram <= mem_ram + 564;    //3.2 v/d
+                4: aux_mem_ram <= mem_ram + 548;    //1.6 v/d
+                3: aux_mem_ram <= mem_ram + 516;    //0.8 v/d
+                2: aux_mem_ram <= mem_ram + 452;    //0.4 v/d
+                1: aux_mem_ram <= mem_ram + 324;    //0.2 v/d
+                0: aux_mem_ram <= mem_ram + 68;     //0.1 v/d
+                default:begin end
+            endcase
             if (h_active == 0 && v_cont == aux_mem_ram) begin 
                 if (canal_selector) begin
                     r_a <= 4'h0;

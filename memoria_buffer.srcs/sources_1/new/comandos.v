@@ -14,9 +14,11 @@ module comandos(
 
 always @(posedge clk_64) begin
     if (~locked || reset) begin
-        canal <= 0;
-        voltdiv <= 7;
-        tiempo <= 2;
+        //canal 0 -> CH2
+        //canal 1 -> CH1
+        canal <= 1;
+        voltdiv <= 0;
+        //tiempo <= 2;
         pausa <= 1;
     end
     else begin
