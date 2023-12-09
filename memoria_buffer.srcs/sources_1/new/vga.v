@@ -277,17 +277,10 @@ always @(posedge clk) begin
 ///////////////////     Graficar resultados desde la memoria    /////////////////
 /////////////////////////////////////////////////////////////////////////////////
            
-           case (voltdiv)
-                7: aux_mem_ram <= mem_ram + 576;    //12.8 v/d
-                6: aux_mem_ram <= mem_ram + 572;    //6.4 v/d        
-                5: aux_mem_ram <= mem_ram + 564;    //3.2 v/d
-                4: aux_mem_ram <= mem_ram + 548;    //1.6 v/d
-                3: aux_mem_ram <= mem_ram + 516;    //0.8 v/d
-                2: aux_mem_ram <= mem_ram + 452;    //0.4 v/d
-                1: aux_mem_ram <= mem_ram + 324;    //0.2 v/d
-                0: aux_mem_ram <= mem_ram + 68;     //0.1 v/d
-                default:begin end
-            endcase
+            //Restamos a 512 para que el cero quede en la parte de abajo de la grilla y no arriba
+            //Sumamos 68 para que grafique dentro de la grilla y no en los margenes que estan por fuera
+            //Al restar a 512, no es necesario sumar una cantidad extra a los valores, ya que se acomodan solos
+            aux_mem_ram <= (512 - mem_ram) + 68;
             if (h_active == 0 && v_cont == aux_mem_ram) begin 
                 if (canal_selector) begin
                     r_a <= 4'h0;
