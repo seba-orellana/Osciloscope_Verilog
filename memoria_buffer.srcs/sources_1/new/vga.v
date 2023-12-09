@@ -314,7 +314,7 @@ always @(posedge clk) begin
                         if (canal_selector) begin
                             r_a <= 4'h0;
                             g_a <= 4'h0;
-                            b_a <= 4'hF;
+                            b_a <= 4'hF; 
                         end
                         else begin
                             r_a <= 4'hF;
