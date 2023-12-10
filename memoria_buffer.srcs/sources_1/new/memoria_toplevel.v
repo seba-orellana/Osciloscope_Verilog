@@ -100,6 +100,7 @@ ram_adc_2 canal_adc_2 (
 //////////////////////////////////////////////////
 
 wire [2:0] voltdiv;
+wire [2:0] tiempo;
 
 wire [8:0] dato_salida_a_vga;
 wire [9:0] dir_salida_a_vga;
@@ -138,7 +139,6 @@ assign wea = 1;
 /////////////////       UART        //////////////////
 //////////////////////////////////////////////////////
 
-//wire [7:0] dato_tx_uart;
 wire [7:0] dato_rx_uart;
 
 uart modulo_uart (
@@ -151,6 +151,7 @@ uart modulo_uart (
         dato_rx_uart,
         canal_selector,
         voltdiv,
+        tiempo,
         pausa
         );      
 
@@ -166,6 +167,7 @@ adaptador adaptador(
     salida_mem_adc_2,      // [15:0] input dato que ingresa de la memoria del ADC
     canal_selector,         // input
     voltdiv,                //input [2:0]
+    tiempo,                 //input [2:0]
     dir_salida_mem_adc,      // [11:0] output Direccion para leer de la memoria del ADC
     dato_salida_a_vga,     // [8:0] output A enviar a la ram del VGA
     dir_salida_a_vga       // [9:0] output Direccion del dato para escribir en la RAM de VGA (0-800)

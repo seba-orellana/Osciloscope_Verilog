@@ -10,6 +10,7 @@ module uart(
     output [7:0] dato_rx_uart,       //Dato recibido de la UART
     output canal_selector,
     output [2:0] voltdiv,
+    output [2:0] tiempo,
     output pausa
     );
     

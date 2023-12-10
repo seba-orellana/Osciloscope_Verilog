@@ -4,7 +4,6 @@ Osciloscopio Verilog
 Falta por hacer:  
 
 * Agregar el canal secundario al ADC
-* Modificar el adaptador con los comandos faltantes
 * Agregar mas texto en pantalla
 * Pruebas generales
 * Completar grilla con info. general
