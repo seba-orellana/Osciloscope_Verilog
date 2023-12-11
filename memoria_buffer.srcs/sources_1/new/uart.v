@@ -7,12 +7,13 @@ module uart(
     input rxd_i,                    //Canal de entrada por donde entran las tramas de la UART
     //input [7:0] dato_tx_uart,       //Dato a enviar por la UART
     output txd_o,                   //Canal de salida por donde salen las tramas de la UART
-    output [7:0] dato_rx_uart,       //Dato recibido de la UART
     output canal_selector,
     output [2:0] voltdiv,
     output [2:0] tiempo,
     output pausa
     );
+
+wire [7:0] dato_rx_uart;
     
 Uart_rx rx (
     rxd_i,              //Trama recibida por la UART
@@ -23,14 +24,14 @@ Uart_rx rx (
     pulso_rx            //Pulso que indica que recibi algo, para usar dentro del modulo
     );
 
-// UART esta puenteada
+wire [7:0] char_tx;
 
 Uart_tx tx (
     clk_uart,
     locked_clk_uart,
     reset,
-    dato_rx_uart,       //Byte a transmitir 
-    pulso_rx,           //Pulso para enviar el byte
+    char_tx,       //Byte a transmitir 
+    pulso_tx,           //Pulso para enviar el byte
     dato_o              //Trama codificada para enviar al transmisor de la UART
     );            
 
@@ -48,4 +49,12 @@ comandos input_teclado (
     pausa    
     ); 
     
+mensajes mensajes (
+    clk_uart,
+    reset,
+    locked_clk_uart,
+    char_tx,
+    pulso_tx
+    );
+        
 endmodule

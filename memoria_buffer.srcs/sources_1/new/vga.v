@@ -6,7 +6,6 @@ module vga (
         input locked,
         input [8:0] mem_ram,
         input canal_selector,
-        input [2:0] voltdiv,
         output [9:0] address_ram,
         output hs,
         output vs,

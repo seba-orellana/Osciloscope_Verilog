@@ -124,7 +124,6 @@ vga vga_monitor (
         locked,
         mem_ram_vga,        //[8:0]
         canal_selector,
-        voltdiv,
         ram_address_vga,    //[9:0]
         hs,
         vs,
@@ -139,8 +138,6 @@ assign wea = 1;
 /////////////////       UART        //////////////////
 //////////////////////////////////////////////////////
 
-wire [7:0] dato_rx_uart;
-
 uart modulo_uart (
         clk_uart,           //7.38 MHz
         locked,
@@ -148,7 +145,6 @@ uart modulo_uart (
         rxd_i,              //Canal de entrada por donde entran las tramas de la UART
         //dato_tx_uart,       //Dato a enviar por la UART
         txd_o,              //Canal de salida por donde salen las tramas de la UART
-        dato_rx_uart,
         canal_selector,
         voltdiv,
         tiempo,
