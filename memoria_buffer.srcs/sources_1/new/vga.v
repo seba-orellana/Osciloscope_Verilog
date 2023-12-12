@@ -6,6 +6,8 @@ module vga (
         input locked,
         input [8:0] mem_ram,
         input canal_selector,
+        input [2:0] tr_level,
+        input tr_active,
         output [9:0] address_ram,
         output hs,
         output vs,
@@ -13,6 +15,7 @@ module vga (
         output [3:0] g,
         output [3:0] b
     );
+
 
 //800x600 60hz
 
@@ -128,6 +131,7 @@ always @(posedge clk) begin
         //Pintar el fondo fuera de la grilla vertical
             if (v_cont >= 67 && v_cont <= 580) begin
                 case (h_cont)
+                    //Grilla vertical
                     168,248,328,408,488,568,648,728,808: begin   //Cada 80 pixeles, una linea de la grilla
                             r_a <= 4'hF;                         //Sumar 88 para centrarla en la pantalla
                             g_a <= 4'hF;
@@ -147,7 +151,7 @@ always @(posedge clk) begin
                 b_a <= 4'h9;                
             end    
             case (v_cont)                      
-                //Grilla vertical
+                //Grilla Horizontal
                 //Centrada en 300, 256 pixeles hacia arriba y hacia abajo
                 //Los 88 pixeles sobrantes (44 arriba y abajo) son para escribir informacion en pantalla
                 //Sumar 23 del BP
@@ -160,6 +164,43 @@ always @(posedge clk) begin
                 default : begin end
             endcase
             
+            //Trigger Level
+            if (tr_active) begin
+                case (tr_level)
+                    //0 + 44 para ingresar dentro de la grilla
+                    4:  if (v_active == 44 || v_active == 45) begin
+                            r_a <= 4'h0;
+                            g_a <= 4'h0;
+                            b_a <= 4'h0;
+                        end
+                    //128 + 44 para ingresar dentro de la grilla
+                    3:  if (v_active == 172 || v_active == 173) begin
+                            r_a <= 4'h0;
+                            g_a <= 4'h0;
+                            b_a <= 4'h0;
+                        end
+                    //256 + 44 para ingresar dentro de la grilla
+                    2:  if (v_active == 300 || v_active == 301) begin
+                            r_a <= 4'h0;
+                            g_a <= 4'h0;
+                            b_a <= 4'h0;
+                        end
+                    //384 + 44 para ingresar dentro de la grilla
+                    1:  if (v_active == 428 || v_active == 429) begin
+                            r_a <= 4'h0;
+                            g_a <= 4'h0;
+                            b_a <= 4'h0;
+                        end
+                    //512 + 44 para ingresar dentro de la grilla
+                    0:  if (v_active == 556 || v_active == 557) begin
+                            r_a <= 4'h0;
+                            g_a <= 4'h0;
+                            b_a <= 4'h0;
+                        end    
+                    default : begin end
+                endcase    
+            end
+                       
             //Indicador de canal dentro de la pantalla
             if (canal_selector) begin
             //Canal 1
@@ -270,7 +311,8 @@ always @(posedge clk) begin
                     g_a <= 4'h0;
                     b_a <= 4'h0;
                 end       
-            end                                  
+            end
+                                           
             
 /////////////////////////////////////////////////////////////////////////////////
 ///////////////////     Graficar resultados desde la memoria    /////////////////

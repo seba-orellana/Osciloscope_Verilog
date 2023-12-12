@@ -9,10 +9,11 @@ module adc(
     input vauxp14,          // input wire vauxp14
     input vauxn14,  
     input canal_selector,
+    input [2:0] tr_level,
+    input tr_active,
     output reg [15:0] dato_canal_1,
     //output reg [15:0] dato_canal_2,
-    output reg [11:0] address,
-    output tr_enable
+    output reg [11:0] address
     );
 
 reg [11:0] cont;
@@ -22,6 +23,7 @@ wire [15:0] dato_adc;
 reg [15:0] val_anterior;
 reg flag_enable;
 reg flag_start;
+reg [15:0] val_tr;
 
 always @(posedge clk) begin
     if (reset | ~locked) begin
@@ -30,23 +32,36 @@ always @(posedge clk) begin
         address <= 0;
         flag_enable <= 1;
         flag_start <= 1;
+        val_tr <= 32768;
     end
     else begin
         canal <= (canal_selector)? 8'h16 : 8'h1e;
+        case (tr_level)
+            0: val_tr <= 75;         // Trigger (casi) sobre 0V
+            1: val_tr <= 16384;     //  1/4 de grilla
+            2: val_tr <= 32768;     //  2/4 de grilla
+            3: val_tr <= 49152;     //  3/4 de grilla
+            4: val_tr <= 65460;     // Triger (casi) sobre 1V
+        endcase
         if (ready) begin
-            if (flag_start) begin            
-                val_anterior <= dato_adc;
-                flag_start <= 0;
-            end else begin    
-                if (val_anterior < 32500 && dato_adc >= 32500)
-                    flag_enable <= 0;
-                if (flag_enable == 0) begin    
-                    address <= (address == 4000)? 0 : address + 1;
-                    dato_canal_1 <= dato_adc;
-                    flag_enable <= (address == 4000)? 1 : 0;
+            if (tr_active) begin
+                if (flag_start) begin            
+                    val_anterior <= dato_adc;
+                    flag_start <= 0;
+                end else begin    
+                    if (val_anterior < val_tr && dato_adc >= val_tr)
+                        flag_enable <= 0;
+                    if (flag_enable == 0) begin    
+                        address <= (address == 4000)? 0 : address + 1;
+                        dato_canal_1 <= dato_adc;
+                        flag_enable <= (address == 4000)? 1 : 0;
+                    end
+                    val_anterior <= dato_adc;
                 end
-                val_anterior <= dato_adc;
-            end    
+            end else begin
+                dato_canal_1 <= dato_adc;
+                address <= (address == 4000)? 0 : address + 1;
+            end                
         end
     end    
 end

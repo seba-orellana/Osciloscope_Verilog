@@ -9,18 +9,19 @@ module comandos(
     output reg canal,
     output reg [2:0] voltdiv,
     output reg [2:0] tiempo,
-    output reg pausa
+    output reg pausa,
+    output reg [2:0] tr_level,
+    output reg tr_active
     );
 
 always @(posedge clk_64) begin
     if (~locked || reset) begin
-        //canal 0 -> CH2
-        //canal 1 -> CH1
         canal <= 1;
         voltdiv <= 0;
-        //tiempo <= 2;
         pausa <= 1;
         tiempo <= 7;
+        tr_active <= 1;
+        tr_level <= 2;
     end
     else begin
         if (pulso_rx) begin
@@ -36,7 +37,13 @@ always @(posedge clk_64) begin
                 8'h44, 8'h64 : //D
                     tiempo <= (tiempo == 7)? 7 : tiempo + 1;
                 8'h50, 8'h70 : //P
-                    pausa <= ~pausa;            
+                    pausa <= ~pausa;
+                8'h54, 8'h74 : //T
+                    tr_level <= (tr_level == 5)? 5 : tr_level + 1;
+                8'h57, 8'h67 : //G
+                    tr_level <= (tr_level == 0)? 0 : tr_level - 1;
+                8'h59, 8'h79 : //Y
+                    tr_active <= ~tr_active;                         
                 default: begin end
             endcase    
         end

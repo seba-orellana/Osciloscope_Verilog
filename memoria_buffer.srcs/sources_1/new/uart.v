@@ -10,7 +10,9 @@ module uart(
     output canal_selector,
     output [2:0] voltdiv,
     output [2:0] tiempo,
-    output pausa
+    output pausa,
+    output [2:0] tr_level,
+    output tr_active
     );
 
 wire [7:0] dato_rx_uart;
@@ -46,7 +48,9 @@ comandos input_teclado (
     canal_selector,
     voltdiv,
     tiempo,
-    pausa    
+    pausa,
+    tr_level,
+    tr_active    
     ); 
     
 mensajes mensajes (

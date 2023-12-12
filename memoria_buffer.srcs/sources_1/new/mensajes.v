@@ -8,10 +8,10 @@ module mensajes(
     output pulso_tx
     );
  
-reg [7:0] bienvenida [115:0];
+reg [7:0] bienvenida [153:0];
 
 reg flag_start;
-reg [6:0] indice;
+reg [8:0] indice;
 reg [7:0] salida_aux;
 reg pulso_aux;
 reg [3:0] i;
@@ -141,12 +141,61 @@ always @(posedge clk) begin
         bienvenida[112] <= 8'h61; //a
         bienvenida[113] <= 8'h20; //espacio
         bienvenida[114] <= 8'h0A; //New Line
-        bienvenida[115] <= 8'h0D; //CR       
+        bienvenida[104] <= 8'h0D; //CR
+        bienvenida[105] <= 8'h54; //T
+        bienvenida[106] <= 8'h3A; //:
+        bienvenida[107] <= 8'h20; //espacio
+        bienvenida[108] <= 8'h2B; //+
+        bienvenida[109] <= 8'h20; //espacio
+        bienvenida[110] <= 8'h74; //t
+        bienvenida[111] <= 8'h72; //r
+        bienvenida[112] <= 8'h69; //i
+        bienvenida[113] <= 8'h67; //g
+        bienvenida[114] <= 8'h67; //g
+        bienvenida[115] <= 8'h65; //e
+        bienvenida[116] <= 8'h72; //r
+        bienvenida[117] <= 8'h20; //espacio
+        bienvenida[118] <= 8'h0A; //New Line
+        bienvenida[119] <= 8'h0D; //CR
+        bienvenida[120] <= 8'h47; //G
+        bienvenida[121] <= 8'h3A; //:
+        bienvenida[122] <= 8'h20; //espacio
+        bienvenida[123] <= 8'h2D; //-
+        bienvenida[124] <= 8'h20; //espacio
+        bienvenida[125] <= 8'h74; //t
+        bienvenida[126] <= 8'h72; //r
+        bienvenida[127] <= 8'h69; //i
+        bienvenida[128] <= 8'h67; //g
+        bienvenida[129] <= 8'h67; //g
+        bienvenida[130] <= 8'h65; //e
+        bienvenida[131] <= 8'h72; //r
+        bienvenida[132] <= 8'h20; //espacio
+        bienvenida[133] <= 8'h0A; //New Line
+        bienvenida[134] <= 8'h0D; //CR
+        bienvenida[135] <= 8'h59; //Y
+        bienvenida[136] <= 8'h3A; //:
+        bienvenida[137] <= 8'h20; //espacio
+        bienvenida[138] <= 8'h74; //t
+        bienvenida[139] <= 8'h72; //r
+        bienvenida[140] <= 8'h69; //i
+        bienvenida[141] <= 8'h67; //g
+        bienvenida[142] <= 8'h67; //g
+        bienvenida[143] <= 8'h65; //e
+        bienvenida[144] <= 8'h72; //r
+        bienvenida[145] <= 8'h20; //espacio
+        bienvenida[146] <= 8'h65; //e
+        bienvenida[147] <= 8'h6E; //n
+        bienvenida[148] <= 8'h2F; ///
+        bienvenida[149] <= 8'h64; //d
+        bienvenida[150] <= 8'h69; //i
+        bienvenida[151] <= 8'h73; //s
+        bienvenida[152] <= 8'h0A; //New Line
+        bienvenida[153] <= 8'h0D; //CR    
     end
     else begin
         if (flag_start) begin
             delay <= delay + 1;
-            if (indice < 115 && ~pulso_aux) begin
+            if (indice < 154 && ~pulso_aux) begin
                 bit_enviado <= 1;
                 for (i = 0; i <= 7; i = i + 1)
                     char[i] <= bienvenida[indice][i];
@@ -159,7 +208,7 @@ always @(posedge clk) begin
                 delay <= 0;
                 bit_enviado <= 0;
             end
-            if (indice == 115) begin
+            if (indice == 153) begin
                 flag_start <= 0;
                 indice <= 0;
                 pulso_aux <= 0;

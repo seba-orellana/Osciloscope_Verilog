@@ -40,6 +40,7 @@ clk_wiz_1 clock_adc_uart
     .clk_in1(clk_100)      // input clk_in1
 );    
 
+/*
 wire canal_selector;
 assign canal_selector = 1;
 
@@ -51,6 +52,7 @@ assign tiempo = 7;
 
 wire pausa;
 assign pausa = 1;
+*/
 
 wire locked;     
 assign locked = (locked0 & locked2);    
@@ -70,6 +72,8 @@ wire [15:0] salida_mem_adc_2;
 wire [11:0] address_adc;
 wire [15:0] dato_canal_1;
 
+wire [2:0] tr_level;
+
 adc adc_convertidor(
     clk_adc,
     reset,
@@ -78,7 +82,9 @@ adc adc_convertidor(
     vauxn6,            // input wire vauxn6
     vauxp14,          // input wire vauxp14
     vauxn14,
-    canal_selector,  
+    canal_selector,
+    tr_level,
+    tr_active,  
     dato_canal_1,       //output [15:0] dato a escribir en memoria
     //output reg [15:0] dato_canal_2,
     address_adc
@@ -105,7 +111,6 @@ ram_adc_2 canal_adc_2 (
   .addrb(dir_salida_mem_adc),  // input wire [11 : 0] direccion de salida
   .doutb(salida_mem_adc_2)  // output wire [15 : 0] dato de salida
 );
-
 
 //////////////////////////////////////////////////
 /////////////////       VGA         //////////////
@@ -136,6 +141,8 @@ vga vga_monitor (
         locked,
         mem_ram_vga,        //[8:0]
         canal_selector,
+        tr_level,
+        tr_active,
         ram_address_vga,    //[9:0]
         hs,
         vs,
@@ -150,7 +157,7 @@ assign wea = 1;
 /////////////////       UART        //////////////////
 //////////////////////////////////////////////////////
 
-/*
+
 uart modulo_uart (
         clk_uart,           //7.38 MHz
         locked,
@@ -161,8 +168,10 @@ uart modulo_uart (
         canal_selector,
         voltdiv,
         tiempo,
-        pausa
-        );   */   
+        pausa,
+        tr_level,
+        tr_active
+        );   
 
 ////////////////////////////////////////////////////////
 //////////         ADAPTADOR DE SENAL       ////////////
