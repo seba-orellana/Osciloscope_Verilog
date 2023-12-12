@@ -14,23 +14,25 @@ module adaptador(
     output reg [8:0] dato_salida,
     output [9:0] dir_salida
     );
-
+ 
 reg [11:0] cont;
 reg [15:0] dato_aux_16;
 reg [9:0] cont_salida;
+reg [15:0] dato_anterior;
 
 always @(posedge clk) begin
     if (reset || ~locked) begin
         dato_aux_16 <= 0;
         cont <= 0;
         cont_salida <= 0;
-        dato_salida <= 0;       
+        dato_salida <= 0;
+        dato_anterior <= 0;       
     end
     else begin
         //cont <= (cont != 3995)? cont + 5 : 0; //cont <= (cont != 3999)? cont + (5*tiempo): 0;
         cont_salida <= (cont_salida != 799)? cont_salida + 1 : 0;
         //Se escoge con cual de los dos canales nos quedamos en pantalla:
-        dato_aux_16 <= (canal_selector)? dato_entrada : dato_entrada_2;
+        dato_aux_16 <= (canal_selector)? dato_entrada : dato_entrada_2;     
         case (voltdiv)
             7: dato_salida <= dato_aux_16[15:14];   //12.8
             6: dato_salida <= dato_aux_16[15:13];   //6.4
@@ -52,7 +54,8 @@ always @(posedge clk) begin
             1: cont <= (cont < 3920)? cont + 80 : 0;    
             0: cont <= (cont < 3900)? cont + 100 : 0;    
             default: begin end
-        endcase       
+        endcase
+        dato_anterior <= dato_aux_16;       
     end    
 end
     

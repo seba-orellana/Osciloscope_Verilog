@@ -40,6 +40,18 @@ clk_wiz_1 clock_adc_uart
     .clk_in1(clk_100)      // input clk_in1
 );    
 
+wire canal_selector;
+assign canal_selector = 1;
+
+wire voltdiv;
+assign voltdiv = 0;
+
+wire [2:0] tiempo;
+assign tiempo = 7;
+
+wire pausa;
+assign pausa = 1;
+
 wire locked;     
 assign locked = (locked0 & locked2);    
 
@@ -99,8 +111,8 @@ ram_adc_2 canal_adc_2 (
 /////////////////       VGA         //////////////
 //////////////////////////////////////////////////
 
-wire [2:0] voltdiv;
-wire [2:0] tiempo;
+//wire [2:0] voltdiv;
+//wire [2:0] tiempo;
 
 wire [8:0] dato_salida_a_vga;
 wire [9:0] dir_salida_a_vga;
@@ -138,6 +150,7 @@ assign wea = 1;
 /////////////////       UART        //////////////////
 //////////////////////////////////////////////////////
 
+/*
 uart modulo_uart (
         clk_uart,           //7.38 MHz
         locked,
@@ -149,7 +162,7 @@ uart modulo_uart (
         voltdiv,
         tiempo,
         pausa
-        );      
+        );   */   
 
 ////////////////////////////////////////////////////////
 //////////         ADAPTADOR DE SENAL       ////////////
@@ -170,3 +183,4 @@ adaptador adaptador(
     );
     
 endmodule
+
