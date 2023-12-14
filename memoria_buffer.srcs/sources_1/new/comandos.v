@@ -40,7 +40,7 @@ always @(posedge clk_64) begin
                     pausa <= ~pausa;
                 8'h54, 8'h74 : //T
                     tr_level <= (tr_level == 5)? 5 : tr_level + 1;
-                8'h57, 8'h67 : //G
+                8'h47, 8'h67 : //G
                     tr_level <= (tr_level == 0)? 0 : tr_level - 1;
                 8'h59, 8'h79 : //Y
                     tr_active <= ~tr_active;                         

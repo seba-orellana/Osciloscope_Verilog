@@ -1,7 +1,5 @@
 # Osciloscope_Verilog
 Osciloscopio Verilog  
 
-Falta por hacer:  
-
-* Agregar el canal secundario al ADC
-* Pruebas generales
+Proyecto Final Programacion Logica para Ingenieria 2023 - UNRC  
+Lahiton - Mancini - Orellana

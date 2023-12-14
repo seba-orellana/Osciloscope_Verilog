@@ -8,15 +8,15 @@ module mensajes(
     output pulso_tx
     );
  
-reg [7:0] bienvenida [153:0];
+reg [7:0] bienvenida [153:0];   //mensaje
 
-reg flag_start;
-reg [8:0] indice;
-reg [7:0] salida_aux;
-reg pulso_aux;
-reg [3:0] i;
-reg [9:0] delay;
-reg bit_enviado;
+reg flag_start;                 //flag para enviar el mensaje una unica vez al iniciar
+reg [8:0] indice;               //indice para recorrer los 153 mensajes del array
+reg [7:0] salida_aux;           //registro auxiliar para enviar datos por el transmisor
+reg pulso_aux;                  //pulso para sacar cada dato
+reg [3:0] i;                    //indice para copiar los 8 bits de cada caracter
+reg [9:0] delay;                //registro para hacer delay entre caracteres enviados
+reg bit_enviado;                //flag para enviar un caracter
     
 always @(posedge clk) begin
     if (~locked || reset) begin

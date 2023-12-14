@@ -40,20 +40,6 @@ clk_wiz_1 clock_adc_uart
     .clk_in1(clk_100)      // input clk_in1
 );    
 
-/*
-wire canal_selector;
-assign canal_selector = 1;
-
-wire voltdiv;
-assign voltdiv = 0;
-
-wire [2:0] tiempo;
-assign tiempo = 7;
-
-wire pausa;
-assign pausa = 1;
-*/
-
 wire locked;     
 assign locked = (locked0 & locked2);    
 
@@ -86,38 +72,26 @@ adc adc_convertidor(
     tr_level,
     tr_active,  
     dato_canal_1,       //output [15:0] dato a escribir en memoria
-    //output reg [15:0] dato_canal_2,
     address_adc
     );
     
 blk_mem_adc16b ram_adc (
   .clka(clk_adc),    // input wire clka
-  .wea(canal_selector & pausa),      // input wire [0 : 0] wea
+  .wea(pausa),      // input wire [0 : 0] wea
   .addra(address_adc),  // input wire [11 : 0] direccion de entrada (ADC)
   .dina(dato_canal_1),    // input wire [15 : 0] dato a escribir (ADC)
   .clkb(clk_adc),    // input wire clkb
-  .enb(canal_selector),            //input enb
+  .enb(wea),            //input enb
   .addrb(dir_salida_mem_adc),  // input wire [11 : 0] direccion de salida
   .doutb(salida_mem_adc)  // output wire [15 : 0] dato de salida
-);
-
-ram_adc_2 canal_adc_2 (
-  .clka(clk_adc),    // input wire clka
-  .wea(~canal_selector & pausa),      // input wire [0 : 0] wea
-  .addra(),  // input wire [11 : 0] direccion de entrada (ADC)
-  .dina(),    // input wire [15 : 0] dato a escribir (ADC)
-  .clkb(clk_adc),    // input wire clkb
-  .enb(~canal_selector),            //input enb
-  .addrb(dir_salida_mem_adc),  // input wire [11 : 0] direccion de salida
-  .doutb(salida_mem_adc_2)  // output wire [15 : 0] dato de salida
 );
 
 //////////////////////////////////////////////////
 /////////////////       VGA         //////////////
 //////////////////////////////////////////////////
 
-//wire [2:0] voltdiv;
-//wire [2:0] tiempo;
+wire [2:0] voltdiv;
+wire [2:0] tiempo;
 
 wire [8:0] dato_salida_a_vga;
 wire [9:0] dir_salida_a_vga;
@@ -163,7 +137,6 @@ uart modulo_uart (
         locked,
         reset,
         rxd_i,              //Canal de entrada por donde entran las tramas de la UART
-        //dato_tx_uart,       //Dato a enviar por la UART
         txd_o,              //Canal de salida por donde salen las tramas de la UART
         canal_selector,
         voltdiv,
@@ -182,8 +155,6 @@ adaptador adaptador(
     reset,
     locked,
     salida_mem_adc,      // [15:0] input dato que ingresa de la memoria del ADC
-    salida_mem_adc_2,      // [15:0] input dato que ingresa de la memoria del ADC
-    canal_selector,         // input
     voltdiv,                //input [2:0]
     tiempo,                 //input [2:0]
     dir_salida_mem_adc,      // [11:0] output Direccion para leer de la memoria del ADC
