@@ -42,22 +42,22 @@ comandos input_teclado (
     clk_uart,
     reset,
     locked_clk_uart,
-    dato_rx_uart,   //Dato que entro de la UART
-    pulso_rx,       //Pulso que indica que recibi algo
-    canal_selector,
-    voltdiv,
-    tiempo,
-    pausa,
-    tr_level,
-    tr_active    
+    dato_rx_uart,   //input [7:0] Dato que entro de la UART
+    pulso_rx,       //input Pulso que indica que recibi algo
+    canal_selector, //output
+    voltdiv,        //output [2:0] valor de escala de volt/div
+    tiempo,         //output [2:0] valor de escala temporal
+    pausa,          //output        
+    tr_level,       //output [2:0] valor del trigger
+    tr_active       //output trigger enable
     ); 
     
 mensajes mensajes (
     clk_uart,
     reset,
     locked_clk_uart,
-    char_tx,
-    pulso_tx
+    char_tx,        //output [7:0] byte con cada caracter del mensaje
+    pulso_tx        //output pulso para activar el TX
     );
         
 endmodule

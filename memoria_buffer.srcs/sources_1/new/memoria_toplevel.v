@@ -9,7 +9,7 @@ module memoria_toplevel(
     input vauxp6,            // input wire vauxp6
     input vauxn6,            // input wire vauxn6
     input vauxp14,          // input wire vauxp14
-    input vauxn14,  
+    input vauxn14,          // input wire vauxn14
     output [3:0] r,
     output [3:0] g,
     output [3:0] b,
@@ -53,7 +53,6 @@ assign locked = (locked0 & locked2);
 wire [11:0] dir_salida_mem_adc;
 
 wire [15:0] salida_mem_adc;
-wire [15:0] salida_mem_adc_2;
 
 wire [11:0] address_adc;
 wire [15:0] dato_canal_1;
@@ -136,14 +135,14 @@ uart modulo_uart (
         clk_uart,           //7.38 MHz
         locked,
         reset,
-        rxd_i,              //Canal de entrada por donde entran las tramas de la UART
-        txd_o,              //Canal de salida por donde salen las tramas de la UART
-        canal_selector,
-        voltdiv,
-        tiempo,
-        pausa,
-        tr_level,
-        tr_active
+        rxd_i,              //input entrada del receptor uart
+        txd_o,              //output salida del receptor uart
+        canal_selector,     //output
+        voltdiv,            //output [2:0] valor de la escala de volt/div
+        tiempo,             //output [2:0] valor de la escala de temporal
+        pausa,              //output
+        tr_level,           //output [2:0] valor del trigger
+        tr_active           //output trigger enable
         );   
 
 ////////////////////////////////////////////////////////

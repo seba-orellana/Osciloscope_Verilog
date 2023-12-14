@@ -4,14 +4,14 @@ module vga (
         input clk,
         input reset,
         input locked,
-        input [8:0] mem_ram,
-        input canal_selector,
-        input [2:0] tr_level,
-        input tr_active,
-        output [9:0] address_ram,
-        output hs,
-        output vs,
-        output [3:0] r,
+        input [8:0] mem_ram,    //dato leido de la memoria a pintar dentro de la pantalla
+        input canal_selector,   
+        input [2:0] tr_level,   //entrada para ajustar el trigger (visualmente) en la pantalla
+        input tr_active,        //entrada para mostrar o no el trigger en pantalla
+        output [9:0] address_ram,   //direccion a leer en memoria para luego pintar en pantalla
+        output hs,              //horizontal sync
+        output vs,              //vertical sync
+        output [3:0] r,         
         output [3:0] g,
         output [3:0] b
     );
@@ -52,21 +52,27 @@ localparam H_PULSO = 928;
 //ACTIVE + FP + BP
 //  600  + 1  + 23 
 localparam V_PULSO = 624;
- 
+
+//Contadores 
 reg [10:0] h_cont;
 reg [9:0] v_cont;
+
+//Indicadores dentro de la region activa
 reg [9:0] h_active;
 reg [9:0] v_active;
  
 //Indica si estoy dentro de la parte ACTIVE (Para poder colorear la pantalla) 
 reg in_active;
 
+//Auxiliares para ir cambiando colores dentro del always
 reg [3:0] r_a;
 reg [3:0] g_a;
 reg [3:0] b_a;
 
+//Valor del pixel anterior para utilizar en la interpolacion
 reg [9:0] val_anterior;
 
+//Registro auxiliar para copiar datos de memoria en always
 reg [10:0] aux_mem_ram;
  
 //Contadores para ir colocando los colores en la pantalla

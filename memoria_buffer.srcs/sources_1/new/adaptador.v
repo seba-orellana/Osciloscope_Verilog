@@ -29,7 +29,6 @@ always @(posedge clk) begin
         dato_anterior <= 0;       
     end
     else begin
-        //cont <= (cont != 3995)? cont + 5 : 0; //cont <= (cont != 3999)? cont + (5*tiempo): 0;
         cont_salida <= (cont_salida != 799)? cont_salida + 1 : 0;
         //Se escoge con cual de los dos canales nos quedamos en pantalla:
         dato_aux_16 <= dato_entrada;     

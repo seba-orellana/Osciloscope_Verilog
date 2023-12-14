@@ -21,7 +21,6 @@ reg bit_enviado;                //flag para enviar un caracter
 always @(posedge clk) begin
     if (~locked || reset) begin
         indice <= 0;
-        salida_aux <= 0;
         pulso_aux <= 0;
         flag_start <= 1;
         delay <= 0;
